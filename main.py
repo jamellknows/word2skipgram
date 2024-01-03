@@ -1,0 +1,1 @@
+from skipgramdirect import skipgram 
