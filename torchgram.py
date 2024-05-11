@@ -334,39 +334,47 @@ if __name__ == '__main__':
             
         elif similarity_method == 'cosine':
             print(f'Running top context words cosine with {softmax_method} and {forward_method}')
-            top_context_words = find_top_context_words_cosine(sentence, model, vocab, reverse_vocab)
-            print('\n cosine similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")
+            for sentence in corpus:
+                top_context_words = find_top_context_words_cosine(sentence, model, vocab, reverse_vocab)
+                print('\n cosine similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")
             
         elif similarity_method == 'tangent':
             print(f'Running top context words tangent with {softmax_method} and {forward_method}')
-            top_context_words = find_top_context_words_cosine(sentence, model, vocab, reverse_vocab)
-            print('\n tangent similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")
+            for sentence in corpus:
+                top_context_words = find_top_context_words_cosine(sentence, model, vocab, reverse_vocab)
+                print('\n tangent similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")
             
         elif similarity_method == 'manhatten':
             print('Running top context words manhatten')
-            top_context_words = find_top_context_words_manhatten(sentence, model, vocab, reverse_vocab)
-            print('\n tangent similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")
+            for sentence in corpus:
+                top_context_words = find_top_context_words_manhatten(sentence, model, vocab, reverse_vocab)
+                print('\n tangent similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")
             
             
         elif similarity_method == 'euclidean':
             print('Running top context words euclidean')
-            top_context_words = find_top_context_words_euclidean(sentence, model, vocab, reverse_vocab)
-            print('\n tangent similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")
+            for sentence in corpus:
+                top_context_words = find_top_context_words_euclidean(sentence, model, vocab, reverse_vocab)
+                print('\n tangent similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")
 
         elif similarity_method == 'jaccard':
             print('Running top context words jaccard')  
-            top_context_words = find_top_context_words_jaccard(sentence, model, vocab, reverse_vocab)
-            print('\n tangent similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")      
+            for sentence in corpus:
+                top_context_words = find_top_context_words_jaccard(sentence, model, vocab, reverse_vocab)
+                print('\n tangent similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")      
+        elif similarity_method == 'cross-comparison':
+            print('Not yet implemented')
+            print('Running the cross comparison - the cross comparison can be either \n for all similarity methods [similarity], all softmax methods [softmax] or all forward methods [forward] \n from which all the other paramteres will be fixed')
         else:
             return 'similarity method not found'
         
