@@ -8,7 +8,9 @@ import torch.nn.functional as F
 from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import cityblock
 import math
-
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords 
 
 # Define the SkipGram model
 class SkipGram(nn.Module):
@@ -62,13 +64,36 @@ class SkipGram(nn.Module):
             output = torch.exp(output)/torch.sum(torch.exp(output))
         return output
            
-# Example training data
-corpus = [
-    "the quick brown fox jumps over the lazy dog",
-    "the lazy dog sleeps"
-]
+
+def read_file_and_convert_to_array(file_path):
+    # Initialize an empty array to store the lines
+    lines_array = []
+
+    # Read the file line by line and append each line to the array
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Strip any leading or trailing whitespaces
+            cleaned_line = line.strip()
+            # Append the cleaned line to the array
+            lines_array.append(cleaned_line)
+
+    return lines_array
+
+def preprocessing(corpus):
+    stop_words = set(stopwords.words('english'))
+    training_data = []
+    sentences = corpus.split(".")
+    for i in range(len(sentences)):
+        sentences[i] = sentences[i].strip()
+        sentence = sentences[i].split()
+        x = [word.strip(string.punctuation) for word in sentence if word not in stop_words]
+        x = [word.lower() for word in x]
+        training_data.append(x)
+    return training_data
 
 # Tokenize the corpus
+file_path = "corpus.txt"
+corpus = read_file_and_convert_to_array(file_path)
 tokens = [word for sentence in corpus for word in sentence.split()]
 word_counts = Counter(tokens)
 vocab = {word: index for index, (word, _) in enumerate(word_counts.most_common())}
@@ -262,20 +287,8 @@ def find_top_context_words_jaccard(sentence, model, vocab, reverse_vocab, top_k=
             top_context_words[word] = heapq.nlargest(top_k, similarity_scores)
     return top_context_words
 
+# METHODS OF PREPROCESSING 
 
-# Example usage
-# sentence = "the lazy dog sleeps"
-# top_context_words = find_top_context_words_cosine(sentence, model, vocab, reverse_vocab)
-# print('\n cosine similarity method')
-# for word, context_words in top_context_words.items():
-#     print(f"Top context words for '{word}': {context_words}")
-
-
-# print('\n tangent similarity method')
-# top_context_words = find_top_context_words_tangent(sentence, model, vocab, reverse_vocab)
-
-# for word, context_words in top_context_words.items():
-#     print(f"Top context words for '{word}': {context_words}")
     
     
 # firstly get it to work with simple word context 
@@ -303,16 +316,21 @@ if __name__ == '__main__':
     model = SkipGram(len(vocab), embedding_dim, softmax_method, forward_method)
     loss_function = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    sentence = "the lazy dog sleeps"
+    # sentence = "the lazy dog sleeps"
+
+    columns_catagory = ["Context Word 1", "Context Word 2", "Context Word 3", "Context Word 4", "Context Word 5"]
     
     def config_run(similarity_method):
         # group by similarity methods 
+        # find a way to select a random word from each sentence and pass through all methods to do a comparison study.
         if similarity_method == 'sine':
             print(f'Running top context words sine with {softmax_method} and {forward_method}')
-            top_context_words = find_top_context_words_sine(sentence, model, vocab, reverse_vocab)
-            print('\n sine similarity method \n')
-            for word, context_words in top_context_words.items():
-                print(f"Top context words for '{word}': {context_words}")
+            for sentence in corpus:
+                sentence = str(sentence)
+                top_context_words = find_top_context_words_sine(sentence, model, vocab, reverse_vocab)
+                print('\n sine similarity method \n')
+                for word, context_words in top_context_words.items():
+                    print(f"Top context words for '{word}': {context_words}")
             
         elif similarity_method == 'cosine':
             print(f'Running top context words cosine with {softmax_method} and {forward_method}')
